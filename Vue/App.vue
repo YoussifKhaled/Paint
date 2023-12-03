@@ -1,98 +1,112 @@
 <template>
-  <div class="ToolBar">
-    <span style="position: absolute;left: 0;">
-      <button class="UnRedo"><i class="fas fa-undo"></i></button>
-      <button class="UnRedo"><i class="fas fa-redo"></i></button>
-    </span>
-    <span>
-      <button class="function">Color</button>
-      <button class="function">Resize</button>
-      <button class="function">Copy</button>
-      <button class="function">Delete</button>
-    </span>
-    <span style="position: absolute;right: 0;">
-      <button class="SaveLoad">Save</button>
-      <button class="SaveLoad">Load</button>
-    </span>
-  </div>
-  <div class="canvas">
-  </div>
-  <div>
-    <table>
-      <tr style="height: 70px;">
-        <button class="ShapeButton">Line</button>
-        <button class="ShapeButton">Square</button>
-        <button class="ShapeButton">Rectangle</button>
-        <button class="ShapeButton">Triangle</button>
-        <button class="ShapeButton">Circle</button>
-        <button class="ShapeButton">Ellipse</button>
-      </tr>
-    </table>
-  </div>
+
+  <NavBar @choose="color = 'red' "></NavBar>
+  <DrawingArea :shapes="shapes" @add = "addShape" @color = "colorShape"></DrawingArea>
+  <ShapesButtons @select = "selectShape"></ShapesButtons>
+
 </template>
 
 <script>
+import NavBar from "@/components/NavBar.vue";
+import DrawingArea from "@/components/DrawingArea.vue";
+import ShapesButtons from "@/components/ShapesButtons.vue";
 export default {
-  name: 'App'
-}
+  name: 'App',
+  components: {ShapesButtons, DrawingArea, NavBar},
+  data () {
+    return {
+      shapes:[],
+      configKonva: {
+        width: 1200,
+        height: 550
+      },
+      selectedShape:'',
+      color: '',
+    }
+  },
+  methods:{
+    addShape(e){
+      if(this.color) return
+      if(this.selectedShape === 'circle') this.addCircle(e)
+      else if(this.selectedShape === 'rectangle') this.addRectangle(e)
+      else if(this.selectedShape === 'ellipse') this.addEllipse(e)
+      else if(this.selectedShape === 'square') this.addSquare(e)
+      else if(this.selectedShape === 'triangle') this.addTriangle(e)
+      else if(this.selectedShape === 'line') this.addLine(e)
+    },
+    addCircle(e){
+      this.shapes.push({
+        type: 'circle',
+        x: e.evt.offsetX,
+        y: e.evt.offsetY,
+        radius: 50,
+        stroke: 'black',
+        draggable: true
+      })
+    },
+    addRectangle(e){
+      this.shapes.push({
+        type: 'rectangle',
+        x: e.evt.offsetX - 100,
+        y: e.evt.offsetY - 50,
+        width: 200,
+        height: 100,
+        stroke: 'black',
+        draggable: true
+      })
+    },
+    addLine(e){
+      this.shapes.push({
+        type: 'line',
+        points: [e.evt.offsetX, e.evt.offsetY, e.evt.offsetX + 200, e.evt.offsetY],
+        stroke: 'black',
+        draggable: true
+      })
+    },
+    addTriangle(e){
+      this.shapes.push({
+        type: 'triangle',
+        points: [e.evt.offsetX, e.evt.offsetY, e.evt.offsetX+200, e.evt.offsetY, e.evt.offsetX+100, e.evt.offsetY-150],
+        stroke: 'black',
+        draggable: true,
+      })
+    },
+    addSquare(e){
+      this.shapes.push({
+        type: 'square',
+        x: e.evt.offsetX - 50,
+        y: e.evt.offsetY - 50,
+        width: 100,
+        height: 100,
+        stroke: 'black',
+        draggable: true
+      })
+    },
+    addEllipse(e){
+      this.shapes.push({
+        type: 'ellipse',
+        x: e.evt.offsetX,
+        y: e.evt.offsetY,
+        radiusX: 70,
+        radiusY: 35,
+        stroke: 'black',
+        draggable: true
+      })
+    },
+    selectShape(shape){
+      this.selectedShape = shape
+      this.color = ''
+    },
+    colorShape(shape){
+      if(this.color)
+      shape.fill = 'red'
+    }
+  }
 </script>
 
 <style>
 body{
   background-color: rgb(181, 51, 77);
-}
-.ToolBar{
-  position: relative;
-  margin: auto;
-  margin-bottom: 2px;
-  width: 806px;
-  height: 30px;
-}
-.function{
-  background: none;
-  border: none;
-  font-size: larger;
-  font-weight: bold;
-  text-decoration: underline;
-  color: black;
-  cursor: pointer;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-.SaveLoad{
-  border: 2px solid black;
-  border-radius: 5px;
-  background: none;
-  cursor: pointer;
-  font-size: 22px;
-  margin-left: 5px;
-}
-.UnRedo{
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 21px;
-  margin-top: 5px;
-}
-.ShapeButton{
-  width: 130px;
-  height: 100%;
-  border: 2px solid black;
-  border-radius: 10px;
-  background-color: rgb(34, 1, 1);
-  opacity: 0.5;
-  margin: 2px;
-  font-size: 25px;
-  font-weight: 600;
-  color: rgb(230, 0, 0);
-  cursor: pointer;
-}
-.canvas{
-  margin: auto;
-  background-color: azure;
-  width: 800px;
-  height: 400px;
-  border: 3px solid #000000;
 }
 #app{
   font-family: Avenir, Helvetica, Arial, sans-serif;
