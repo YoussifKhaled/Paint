@@ -102,7 +102,6 @@ export default {
       shape.fill = 'red'
     }
   }
-}
 </script>
 
 <style>
