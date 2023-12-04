@@ -13,7 +13,6 @@
 export default {
   emits:['select'],
 }
-
 </script>
 
 <style scoped>

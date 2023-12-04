@@ -9,16 +9,16 @@
           <v-line v-if="shape.type === 'line' " :config="{
             points: shape.points,
             stroke: shape.stroke,
-            draggable: shape.draggable
-          }"></v-line>
+            draggable: true
+          }" @click = "handleShapeClicking"></v-line>
 
           <v-line v-if = "shape.type === 'triangle' " :config="{
             points: shape.points,
             stroke: shape.stroke,
             fill : shape.fill,
-            draggable: shape.draggable,
+            draggable: true,
             closed:true
-          }" @click= "colorShape(shape)"></v-line>
+          }" @click= "handleShapeClicking(shape)"></v-line>
 
           <v-circle v-if="shape.type === 'circle' " :config="{
           x: shape.x,
@@ -26,7 +26,7 @@
           radius: shape.radius,
           fill: shape.fill,
           stroke: shape.stroke,
-          draggable: shape.draggable}" @click= "colorShape(shape)"></v-circle>
+          draggable: true}" @click= "handleShapeClicking(shape)"></v-circle>
 
           <v-rect v-if="shape.type === 'rectangle' || shape.type === 'square' "  :config="{
           x: shape.x,
@@ -35,7 +35,7 @@
           height: shape.height,
           fill: shape.fill,
           stroke: shape.stroke,
-          draggable: shape.draggable}" @click= "colorShape(shape)"> </v-rect>
+          draggable: true}" @click= "handleShapeClicking(shape)"> </v-rect>
 
           <v-ellipse v-if="shape.type === 'ellipse' "  :config="{
           x: shape.x,
@@ -44,7 +44,7 @@
           radiusY: shape.radiusY,
           fill: shape.fill,
           stroke: shape.stroke,
-          draggable: shape.draggable}" @click= "colorShape(shape)"> </v-ellipse>
+          draggable: true}" @click= "handleShapeClicking(shape)"> </v-ellipse>
 
         </template>
 
@@ -57,7 +57,7 @@
 export default {
   name: 'DrawingArea',
   props:['shapes'],
-  emits: ['add','color'],
+  emits: ['add','shapeClick'],
   data () {
     return {
       configKonva: {
@@ -70,8 +70,8 @@ export default {
     addShape(e){
       this.$emit('add', e)
     },
-    colorShape(shape){
-      this.$emit('color', shape)
+    handleShapeClicking(shape){
+      this.$emit('shapeClick', shape)
     }
   }
 }
