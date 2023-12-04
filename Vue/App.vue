@@ -1,6 +1,6 @@
 <template>
 
-  <NavBar @choose="color = 'red' "></NavBar>
+  <NavBar @choose = " color = 'red',this.delete = false " @delete = " this.delete = true,this.color = '' "></NavBar>
   <DrawingArea :shapes="shapes" @add = "addShape" @shapeClick = "handleShapeClicking"></DrawingArea>
   <ShapesButtons @select = "selectShape"></ShapesButtons>
 
@@ -24,12 +24,13 @@ export default {
       },
       selectedShape:'',
       color: '',
+      delete: '',
     }
   },
   methods:{
     addShape(e){
 
-      if(this.color) return
+      if(this.color || this.delete) return
 
       const shapeRequest = {
         shapeType : this.selectedShape,
@@ -38,6 +39,7 @@ export default {
         y : e.evt.offsetY,
       }
 
+      //add shape to list of shapes in backend and list of shapes in frontend
       axios.post('http://localhost:8080/paint/shapes', JSON.stringify(shapeRequest),{
         headers: {'Content-Type': 'application/json'}})
           .then((response) => {
@@ -50,13 +52,28 @@ export default {
     selectShape(shape){
       this.selectedShape = shape
       this.color = ''
+      this.delete = false
     },
     handleShapeClicking(shape){
+
+      //handle the shape clicking based on the selected option from the navbar
       if(this.color) this.colorShape(shape)
-      //else this.deleteShape(shape)
+      else if(this.delete) this.deleteShape(shape)
     },
     colorShape(shape){
+      //change color of shape in frontend
       shape.fill = this.color
+    },
+    deleteShape(shape){
+
+      //delete shape from shapes array
+      let shapeToBeRemoved = this.shapes.findIndex(s => s.id === shape.id)
+      this.shapes.splice(shapeToBeRemoved,1)
+
+      //delete shape from list of shapes in backend
+      axios.delete('http://localhost:8080/paint/shapes/' + shape.id)
+          .then((response) => console.log(response.data))
+          .catch((error) => console.log(error))
     }
   }
 }
