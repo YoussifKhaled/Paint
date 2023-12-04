@@ -1,98 +1,78 @@
 <template>
-  <div class="ToolBar">
-    <span style="position: absolute;left: 0;">
-      <button class="UnRedo"><i class="fas fa-undo"></i></button>
-      <button class="UnRedo"><i class="fas fa-redo"></i></button>
-    </span>
-    <span>
-      <button class="function">Color</button>
-      <button class="function">Resize</button>
-      <button class="function">Copy</button>
-      <button class="function">Delete</button>
-    </span>
-    <span style="position: absolute;right: 0;">
-      <button class="SaveLoad">Save</button>
-      <button class="SaveLoad">Load</button>
-    </span>
-  </div>
-  <div class="canvas">
-  </div>
-  <div>
-    <table>
-      <tr style="height: 70px;">
-        <button class="ShapeButton">Line</button>
-        <button class="ShapeButton">Square</button>
-        <button class="ShapeButton">Rectangle</button>
-        <button class="ShapeButton">Triangle</button>
-        <button class="ShapeButton">Circle</button>
-        <button class="ShapeButton">Ellipse</button>
-      </tr>
-    </table>
-  </div>
+
+  <NavBar @Color="CrntOprtn='Cl'" @Size="CrntOprtn='S'" @Copy="CrntOprtn='Cp'" @Del="CrntOprtn='Dl'" ></NavBar>
+  <span>
+    <CP v-if="CrntOprtn === 'Cl'" style="float: left;margin-left: 420px;" inline v-model="color"/>
+    <DrawingArea :shapes="shapes" @add = "addShape" @shapeClick = "handleShapeClicking"></DrawingArea>
+  </span>
+  <ShapesButtons @select = "selectShape"></ShapesButtons>
+
 </template>
 
 <script>
+import NavBar from "@/components/NavBar.vue";
+import DrawingArea from "@/components/DrawingArea.vue";
+import ShapesButtons from "@/components/ShapesButtons.vue";
+import axios from "axios";
 export default {
-  name: 'App'
+
+  name: 'App',
+  components: {ShapesButtons, DrawingArea, NavBar},
+  data () {
+    return {
+      shapes:[],
+      configKonva:{
+        width: 800,
+        height: 500
+      },
+      CrntOprtn: '',
+      selectedShape:'',
+      color: '',
+    }
+  },
+  methods:{
+    addShape(e){
+      if(this.CrntOprtn!='Dr') return
+      const shapeRequest = {
+        shapeType : this.selectedShape,
+        id: Date.now().toString(),
+        x : e.evt.offsetX,
+        y : e.evt.offsetY,
+      }
+      axios.post('http://localhost:8080/paint/shapes', JSON.stringify(shapeRequest),{
+        headers: {'Content-Type': 'application/json'}})
+          .then((response) => {
+            console.log(response.data)
+            this.shapes.push(response.data)
+          })
+          .catch((error) => console.log(error))
+
+    },
+    selectShape(shape){
+      this.CrntOprtn = 'Dr'
+      this.selectedShape = shape
+    },
+    handleShapeClicking(shape){
+      if(this.CrntOprtn==='Cl')this.colorShape(shape)
+      else if(this.CrntOprtn==='Dl')this.deleteShape(shape)
+    },colorShape(shape){
+      shape.fill = '#'+this.color
+    },deleteShape(shape){
+      //delete shape from shapes array
+      let shapeToBeRemoved = this.shapes.findIndex(s => s.id === shape.id)
+      this.shapes.splice(shapeToBeRemoved,1)
+      //delete shape from list of shapes in backend
+      axios.delete('http://localhost:8080/paint/shapes/' + shape.id)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error))
+    }
+  }
 }
 </script>
 
 <style>
 body{
-  background-color: rgb(181, 51, 77);
-}
-.ToolBar{
-  position: relative;
-  margin: auto;
-  margin-bottom: 2px;
-  width: 806px;
-  height: 30px;
-}
-.function{
-  background: none;
-  border: none;
-  font-size: larger;
-  font-weight: bold;
-  text-decoration: underline;
-  color: black;
-  cursor: pointer;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-.SaveLoad{
-  border: 2px solid black;
-  border-radius: 5px;
-  background: none;
-  cursor: pointer;
-  font-size: 22px;
-  margin-left: 5px;
-}
-.UnRedo{
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 21px;
-  margin-top: 5px;
-}
-.ShapeButton{
-  width: 130px;
-  height: 100%;
-  border: 2px solid black;
-  border-radius: 10px;
-  background-color: rgb(34, 1, 1);
-  opacity: 0.5;
-  margin: 2px;
-  font-size: 25px;
-  font-weight: 600;
-  color: rgb(230, 0, 0);
-  cursor: pointer;
-}
-.canvas{
-  margin: auto;
-  background-color: azure;
-  width: 800px;
-  height: 400px;
-  border: 3px solid #000000;
+  background-color: rgb(243, 243, 243);
 }
 #app{
   font-family: Avenir, Helvetica, Arial, sans-serif;
