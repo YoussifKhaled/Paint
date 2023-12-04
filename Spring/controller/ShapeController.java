@@ -28,4 +28,12 @@ public class ShapeController {
         Shape shape = shapeFactory.getShape(shapeRequest);
         return shapeService.addShape(shape);
     }
+
+    @DeleteMapping("/shapes/{id}")
+    public void deleteShape(@PathVariable String id){
+        System.out.println(shapeService.getShapes());
+        shapeService.deleteShape(id);
+        System.out.println(shapeService.getShapes());
+    }
 }
+
