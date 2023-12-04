@@ -10,7 +10,7 @@
             points: shape.points,
             stroke: shape.stroke,
             draggable: true
-          }" @click = "handleShapeClicking"></v-line>
+          }" @click = "handleShapeClicking(shape)"></v-line>
 
           <v-line v-if = "shape.type === 'triangle' " :config="{
             points: shape.points,
