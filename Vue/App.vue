@@ -6,6 +6,9 @@
     <DrawingArea :shapes="shapes" @add = "addShape" @shapeClick = "handleShapeClicking"></DrawingArea>
   </span>
   <ShapesButtons @select = "selectShape"></ShapesButtons>
+  <p>Mouse position X: {{mousePosX}}</p>
+  <p>Mouse position Y: {{mousePosY}}</p>
+  <template v-for = "shape in shapes" :key ="shape.id">[{{shape.x}},{{shape.y}},{{shape.radius}}] </template>
 
 </template>
 
@@ -14,12 +17,13 @@ import NavBar from "@/components/NavBar.vue";
 import DrawingArea from "@/components/DrawingArea.vue";
 import ShapesButtons from "@/components/ShapesButtons.vue";
 import axios from "axios";
-export default {
-
+export default{
   name: 'App',
   components: {ShapesButtons, DrawingArea, NavBar},
-  data () {
+  data() {
     return {
+      mousePosX: 0,
+      mousePosY: 0,
       shapes:[],
       configKonva:{
         width: 800,
@@ -27,8 +31,14 @@ export default {
       },
       CrntOprtn: '',
       selectedShape:'',
-      color: '',
+      color: '00fac0',
     }
+  },
+  mounted() {
+    document.addEventListener("mousemove", (event) => {
+      this.mousePosX = event.clientX-624;
+      this.mousePosY = event.clientY-69;
+    });
   },
   methods:{
     addShape(e){
@@ -39,14 +49,13 @@ export default {
         x : e.evt.offsetX,
         y : e.evt.offsetY,
       }
-      axios.post('http://localhost:8080/paint/shapes', JSON.stringify(shapeRequest),{
+      axios.post('http://localhost:8080/paint/create', JSON.stringify(shapeRequest),{
         headers: {'Content-Type': 'application/json'}})
           .then((response) => {
             console.log(response.data)
             this.shapes.push(response.data)
           })
           .catch((error) => console.log(error))
-
     },
     selectShape(shape){
       this.CrntOprtn = 'Dr'
@@ -55,16 +64,64 @@ export default {
     handleShapeClicking(shape){
       if(this.CrntOprtn==='Cl')this.colorShape(shape)
       else if(this.CrntOprtn==='Dl')this.deleteShape(shape)
-    },colorShape(shape){
+      else if(this.CrntOprtn==='S')this.ResizeShape(shape)
+    },
+    colorShape(shape){
       shape.fill = '#'+this.color
-    },deleteShape(shape){
+    },
+    deleteShape(shape){
       //delete shape from shapes array
       let shapeToBeRemoved = this.shapes.findIndex(s => s.id === shape.id)
       this.shapes.splice(shapeToBeRemoved,1)
       //delete shape from list of shapes in backend
-      axios.delete('http://localhost:8080/paint/shapes/' + shape.id)
+      axios.delete('http://localhost:8080/paint/delete/' + shape.id)
       .then((response) => console.log(response.data))
       .catch((error) => console.log(error))
+    },
+    ResizeShape(shape){// Cast event to MouseEvent
+      const updateShapeSize = (event) => {
+        const mouseX = event.clientX - 624;
+        const mouseY = event.clientY - 69;
+        const centerDistance = Math.sqrt(
+          Math.pow(mouseX - shape.x, 2) + Math.pow(mouseY - shape.y, 2)
+        );
+        switch(shape.type){
+          case 'circle':
+            shape.radius = centerDistance;
+            break;
+          case 'rect'||'square':
+            // shape.height = ;
+            // shape.width = ;
+            break;
+          case 'triangle':
+            // shape.points[0] = ;
+            // shape.points[1] = ;
+            // shape.points[2] = ;
+            // shape.points[3] = ;
+            // shape.points[4] = ;
+            // shape.points[5] = ;
+            break;
+          case 'line':
+            // shape.points[0] = ;
+            // shape.points[1] = ;
+            // shape.points[2] = ;
+            // shape.points[3] = ;
+            break;
+          case 'ellipse':
+            // shape.radiusX = ;
+            // shape.radiusY = ;            
+            break;
+          default:
+            break;
+        }
+        document.addEventListener('click', handleClick);
+      };
+      const handleClick = () => {
+        document.removeEventListener('mousemove', updateShapeSize);
+        document.addEventListener('click', handleClick);
+        return;
+      };
+      document.addEventListener('mousemove', updateShapeSize);
     }
   }
 }
