@@ -1,8 +1,8 @@
 package com.example.paint.model;
 
 public class LineSegment extends Shape{
-    private double[] points;
-    private double length = 200;
+    private double[] points = new double[4];
+    private double length;
 
     public LineSegment(){
 
@@ -10,7 +10,8 @@ public class LineSegment extends Shape{
 
     public LineSegment(ShapeRequest shapeRequest){
         super(shapeRequest);
-        points = new double[4];
+        this.length = 200;
+        points = new double[]{0, 0, this.length, 0};
     }
 
     public void setLength(double length){
@@ -23,10 +24,7 @@ public class LineSegment extends Shape{
     }
 
     public double[] getPoints() {
-        points[0] = this.x;
-        points[1] = this.y;
-        points[2] = this.x + this.length;
-        points[3] = this.y;
+
         return points;
     }
 
