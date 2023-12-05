@@ -2,19 +2,20 @@ package dev.PainterApplication.Painter.Model;
 
 public class LineSegment extends Shape{
     private double[] points;
-    private double length = 200;
-
-    public LineSegment(){
-
-    }
-
+    private double length;
+    public LineSegment(){}
     public LineSegment(ShapeRequest shapeRequest){
         super(shapeRequest);
-        points = new double[4];
+        if(shapeRequest.getLength()==0){
+            this.length=200;
+        }
+        else{
+            this.length=shapeRequest.getLength();
+        }
+        points = new double[]{0,0,this.length,0};
     }
 
     public void setLength(double length){
-
         this.length = length;
     }
     public double getLength(){

@@ -3,16 +3,10 @@ package dev.PainterApplication.Painter.Model;
 public class Triangle extends Shape {
     private double length;
     private double[] points;
-
-    public Triangle(){
-
-    }
-
+    public Triangle(){}
     public Triangle(double length){
-
         this.length = length;
     }
-
     public Triangle(ShapeRequest shapeRequest) {
         super(shapeRequest);
         points = new double[6];
