@@ -1,14 +1,9 @@
 <template>
 
-  <NavBar @Color="CrntOprtn='Cl'" @Size="CrntOprtn='S'" @Copy="CrntOprtn='Cp'" @Del="CrntOprtn='Dl'" ></NavBar>
-  <span>
-    <CP v-if="CrntOprtn === 'Cl'" style="float: left;margin-left: 420px;" inline v-model="color"/>
-    <DrawingArea :shapes="shapes" @add = "addShape" @shapeClick = "handleShapeClicking"></DrawingArea>
-  </span>
-  <ShapesButtons @select = "selectShape"></ShapesButtons>
-  <p>Mouse position X: {{mousePosX}}</p>
-  <p>Mouse position Y: {{mousePosY}}</p>
-  <template v-for = "shape in shapes" :key ="shape.id">[{{shape.x}},{{shape.y}},{{shape.points}}] </template>
+  <NavBar :CrntOprtn="CrntOprtn" @Color="CrntOprtn='Cl'" @Size="CrntOprtn='S'" @Copy="CrntOprtn='Cp'" @Del="CrntOprtn='Dl'" ></NavBar>
+  <CP v-if="CrntOprtn === 'Cl'" style="margin-bottom:4px ;" v-model="color"/>
+  <DrawingArea :shapes="shapes" @add = "addShape" @shapeClick = "handleShapeClicking"></DrawingArea>
+  <ShapesButtons :CrntOprtn="CrntOprtn" :selectedShape="selectedShape" @select = "selectShape"></ShapesButtons>
 
 </template>
 
@@ -22,8 +17,6 @@ export default{
   components: {ShapesButtons, DrawingArea, NavBar},
   data() {
     return {
-      mousePosX: 0,
-      mousePosY: 0,
       shapes:[],
       configKonva:{
         width: 800,
@@ -33,12 +26,6 @@ export default{
       selectedShape:'',
       color: '00fac0',
     }
-  },
-  mounted() {
-    document.addEventListener("mousemove", (event) => {
-      this.mousePosX = event.clientX-624;
-      this.mousePosY = event.clientY-69;
-    });
   },
   methods:{
     addShape(e){
@@ -78,10 +65,12 @@ export default{
       .then((response) => console.log(response.data))
       .catch((error) => console.log(error))
     },
-    ResizeShape(shape){// Cast event to MouseEvent
+    ResizeShape(shape){
+      const canvas = document.querySelector('.konvajs-content');
+      const canvasRect = canvas.getBoundingClientRect();
       const updateShapeSize = (event) => {
-        const mouseX = event.clientX - 624;
-        const mouseY = event.clientY - 69;
+        const mouseX = event.clientX - canvasRect.left;
+        const mouseY = event.clientY - canvasRect.top;
         const centerDistance = Math.sqrt(
           Math.pow(mouseX - shape.x, 2) + Math.pow(mouseY - shape.y, 2)
           );
@@ -122,10 +111,9 @@ export default{
       };
       const handleClick = () => {
         document.removeEventListener('mousemove', updateShapeSize);
-        document.addEventListener('click', handleClick);
-        return;
       };
       document.addEventListener('mousemove', updateShapeSize);
+      this.CrntOprtn = '';
     }
   }
 }
