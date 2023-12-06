@@ -8,7 +8,7 @@
   <ShapesButtons @select = "selectShape"></ShapesButtons>
   <p>Mouse position X: {{mousePosX}}</p>
   <p>Mouse position Y: {{mousePosY}}</p>
-  <template v-for = "shape in shapes" :key ="shape.id">[{{shape.x}},{{shape.y}},{{shape.radius}}] </template>
+  <template v-for = "shape in shapes" :key ="shape.id">[{{shape.x}},{{shape.y}},{{shape.points}}] </template>
 
 </template>
 
@@ -84,32 +84,36 @@ export default{
         const mouseY = event.clientY - 69;
         const centerDistance = Math.sqrt(
           Math.pow(mouseX - shape.x, 2) + Math.pow(mouseY - shape.y, 2)
-        );
+          );
+        const ax = mouseX-shape.x;
+        const ay = mouseY-shape.y;
         switch(shape.type){
+          case 'triangle':
           case 'circle':
             shape.radius = centerDistance;
             break;
-          case 'rect'||'square':
-            // shape.height = ;
-            // shape.width = ;
+          case 'rectangle':
+          if(ax>=0 && ay>=0){
+            if(ay/ax>shape.height/shape.width)
+              shape.height = ay;
+            else
+              shape.width = ax;
+            }
             break;
-          case 'triangle':
-            // shape.points[0] = ;
-            // shape.points[1] = ;
-            // shape.points[2] = ;
-            // shape.points[3] = ;
-            // shape.points[4] = ;
-            // shape.points[5] = ;
+          case 'square':
+            if(ax>=0 && ay>=0){
+              shape.height = Math.max(ax,ay);
+              shape.width = shape.height;
+            }
             break;
           case 'line':
-            // shape.points[0] = ;
-            // shape.points[1] = ;
-            // shape.points[2] = ;
-            // shape.points[3] = ;
+            shape.points = [0,0,ax,ay]; 
             break;
           case 'ellipse':
-            // shape.radiusX = ;
-            // shape.radiusY = ;            
+            if(Math.abs(ax)<Math.abs(ay))
+              shape.radiusY = centerDistance;
+            else
+              shape.radiusX = centerDistance;
             break;
           default:
             break;
