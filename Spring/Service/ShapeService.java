@@ -15,6 +15,8 @@ import java.util.ArrayList;
 @Service
 public class ShapeService {
     private static ArrayList<Shape> shapes;
+    @Autowired
+    private DataBase database;
     public ShapeService(){
         shapes = new ArrayList<>();
     }
@@ -57,8 +59,13 @@ public class ShapeService {
             }
         }
     }   
-    public void ShapesSave(String filePath) throws IOException {
-        XmlMapper xmlMapper=new XmlMapper();
-        xmlMapper.writeValue(new File(filePath),shapes);
+    public  ArrayList<Shape> loadShapes (String filePath,String type) throws IOException {
+        database.setFilePath(filePath);
+        shapes = database.loadDataBase(type);
+        return shapes;
+    }
+    public  void SaveShapes (String filePath,String type) throws IOException {
+        database.setFilePath(filePath);
+        database.SaveDataBase(type);
     }
 }
