@@ -3,49 +3,59 @@
     <v-stage :config="configKonva" @click = "addShape">
       <v-layer>
         <template v-for = "shape in shapes" :key ="shape.id">
-          <v-line v-if="shape.type === 'line' " :config="{
-            points: shape.points,
-            stroke: shape.stroke,
-            draggable: true}"
-          @click = "handleShapeClicking(shape)"></v-line>
-
-          <v-line v-if = "shape.type === 'triangle' " :config="{
-            points: shape.points,
-            stroke: shape.stroke,
-            fill : shape.fill,
-            draggable: true,
-            closed:true}"
-          @click= "handleShapeClicking(shape)"></v-line>
-
-          <v-circle v-if="shape.type === 'circle' " :config="{
+          <v-line v-if = "shape.type === 'line' " :config="{
             x: shape.x,
             y: shape.y,
+            points: shape.points,
+            stroke: shape.stroke,
+            draggable: true,
+            id: shape.id,
+          }" @click = "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-line>
+
+          <v-regular-polygon v-if="shape.type === 'triangle' " :config="{
+            x: shape.x,
+            y: shape.y,
+            sides: 3,
             radius: shape.radius,
             fill: shape.fill,
             stroke: shape.stroke,
-            draggable: true,}"
-          @click= "handleShapeClicking(shape)"></v-circle>
+            id: shape.id,
+            draggable: true
+          }" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-regular-polygon>
+
+          <v-circle v-if="shape.type === 'circle' " :config="{
+          x: shape.x,
+          y: shape.y,
+          radius: shape.radius,
+          fill: shape.fill,
+          stroke: shape.stroke,
+          id: shape.id,
+          draggable: true
+          }" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-circle>
 
           <v-rect v-if="shape.type === 'rectangle' || shape.type === 'square' "  :config="{
-            x: shape.x,
-            y: shape.y,
-            width: shape.width,
-            height: shape.height,
-            fill: shape.fill,
-            stroke: shape.stroke,
-            draggable: true}"
-          @click= "handleShapeClicking(shape)"></v-rect>
+          x: shape.x,
+          y: shape.y,
+          width: shape.width,
+          height: shape.height,
+          fill: shape.fill,
+          stroke: shape.stroke,
+          id: shape.id,
+          draggable: true
+          }" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-rect>
 
           <v-ellipse v-if="shape.type === 'ellipse' "  :config="{
-            x: shape.x,
-            y: shape.y,
-            radiusX: shape.radiusX,
-            radiusY: shape.radiusY,
-            fill: shape.fill,
-            stroke: shape.stroke,
-            draggable: true}"
-          @click= "handleShapeClicking(shape)"></v-ellipse>
-        </template>
+          x: shape.x,
+          y: shape.y,
+          radiusX: shape.radiusX,
+          radiusY: shape.radiusY,
+          fill: shape.fill,
+          stroke: shape.stroke,
+          id: shape.id,
+          draggable: true
+          }" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-ellipse>
+          </template>
+        <v-transformer ref = "transformer"> </v-transformer>
       </v-layer>
     </v-stage>
   </div>
@@ -62,6 +72,7 @@ export default {
         width: 800,
         height: 500
       },
+      selectedId:''
     }
   },
   methods:{
@@ -71,6 +82,10 @@ export default {
     handleShapeClicking(shape){
       this.$emit('shapeClick', shape)
     },
+    handleDragEnd(e,shape){
+      shape.x = Math.round(e.target.attrs.x);
+      shape.y = Math.round(e.target.attrs.y);
+    }
   }
 }
 </script>

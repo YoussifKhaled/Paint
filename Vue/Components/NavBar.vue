@@ -5,10 +5,10 @@
       <button class="UnRedo"><i class="fas fa-redo"></i></button>
     </span>
     <span>
-      <button class="function" @click="this.$emit('Color')">Color</button>
-      <button class="function" @click="this.$emit('Size')">Resize</button>
-      <button class="function" @click="this.$emit('Copy')">Copy</button>
-      <button class="function" @click="this.$emit('Del')">Delete</button>
+      <button class="function" :class="{Selected: CrntOprtn === 'Cl'}" @click="this.$emit('Color')">Color</button>
+      <button class="function" :class="{Selected: CrntOprtn === 'S'}" @click="this.$emit('Size')">Resize</button>
+      <button class="function" :class="{Selected: CrntOprtn === 'Cp'}" @click="this.$emit('Copy')">Copy</button>
+      <button class="function" :class="{Selected: CrntOprtn === 'Dl'}" @click="this.$emit('Del')">Delete</button>
     </span>
     <span style="position: absolute;right: 0;">
       <button class="SaveLoad">Save</button>
@@ -20,11 +20,18 @@
 <script>
 export default {
   name: 'NavBar',
-  emits: ['Color','Size','Copy','Del']
+  emits: ['Color','Size','Copy','Del'],
+  props: {CrntOprtn: String}
 }
 </script>
 
-<style>
+<style scoped>
+.Selected{
+  border: 4px solid rgb(9, 218, 9) !important;
+  border-radius: 10px !important;
+  background-color: aquamarine !important;
+  text-decoration: none !important;
+}
 .ToolBar{
   position: relative;
   margin: auto auto 2px;
