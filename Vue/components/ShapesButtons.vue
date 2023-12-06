@@ -13,7 +13,6 @@
 export default {
   emits:['select'],
 }
-
 </script>
 
 <style scoped>
@@ -21,18 +20,17 @@ export default {
 .ShapeButton{
   width: 130px;
   height: 100%;
-  border: 2px solid black;
+  border: none;
   border-radius: 10px;
-  background-color: rgb(34, 1, 1);
-  opacity: 0.5;
+  background-color: rgb(41, 173, 178);
   margin: 5px;
   font-size: 25px;
   font-weight: 600;
-  color: rgb(230, 0, 0);
+  color: rgb(7, 102, 173);
   cursor: pointer;
 }
 .shapes-buttons{
-  width: 1200px;
+  width: 1100px;
   margin: auto;
   display: flex;
   justify-content: space-around;

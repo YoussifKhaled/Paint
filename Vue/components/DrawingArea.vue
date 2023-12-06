@@ -4,21 +4,26 @@
     <v-stage :config="configKonva" @click = "addShape">
       <v-layer>
 
-        <template v-for = "shape in shapes" :key ="shape.x">
+        <template v-for = "shape in shapes" :key ="shape.id">
 
-          <v-line v-if="shape.type === 'line' " :config="{
+          <v-line v-if = "shape.type === 'line' " :config="{
             points: shape.points,
             stroke: shape.stroke,
-            draggable: shape.draggable
-          }"></v-line>
+            draggable: true,
+            id: shape.id,
+            x: shape.x,
+            y: shape.y,
+          }" @click = "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)" ></v-line>
 
-          <v-line v-if = "shape.type === 'triangle' " :config="{
-            points: shape.points,
+          <v-regular-polygon v-if="shape.type === 'triangle' " :config="{
+            x: shape.x,
+            y: shape.y,
+            sides: 3,
+            radius: 100,
+            fill: shape.fill,
             stroke: shape.stroke,
-            fill : shape.fill,
-            draggable: shape.draggable,
-            closed:true
-          }" @click= "colorShape(shape)"></v-line>
+            id: shape.id,
+            draggable: true}" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"> </v-regular-polygon>
 
           <v-circle v-if="shape.type === 'circle' " :config="{
           x: shape.x,
@@ -26,7 +31,8 @@
           radius: shape.radius,
           fill: shape.fill,
           stroke: shape.stroke,
-          draggable: shape.draggable}" @click= "colorShape(shape)"></v-circle>
+          id: shape.id,
+          draggable: true}" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-circle>
 
           <v-rect v-if="shape.type === 'rectangle' || shape.type === 'square' "  :config="{
           x: shape.x,
@@ -35,7 +41,8 @@
           height: shape.height,
           fill: shape.fill,
           stroke: shape.stroke,
-          draggable: shape.draggable}" @click= "colorShape(shape)"> </v-rect>
+          id: shape.id,
+          draggable: true}" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"> </v-rect>
 
           <v-ellipse v-if="shape.type === 'ellipse' "  :config="{
           x: shape.x,
@@ -44,10 +51,12 @@
           radiusY: shape.radiusY,
           fill: shape.fill,
           stroke: shape.stroke,
-          draggable: shape.draggable}" @click= "colorShape(shape)"> </v-ellipse>
+          id: shape.id,
+          draggable: true}" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"> </v-ellipse>
 
         </template>
 
+        <v-transformer ref = "transformer"> </v-transformer>
       </v-layer>
     </v-stage>
   </div>
@@ -57,21 +66,29 @@
 export default {
   name: 'DrawingArea',
   props:['shapes'],
-  emits: ['add','color'],
+  emits: ['add','shapeClick'],
   data () {
     return {
       configKonva: {
-        width: 1200,
+        width: 1100,
         height: 550
       },
+      selectedId:''
     }
   },
   methods:{
     addShape(e){
+      //console.log(e.target.x(),e.target.y())
       this.$emit('add', e)
     },
-    colorShape(shape){
-      this.$emit('color', shape)
+    handleShapeClicking(shape){
+      this.$emit('shapeClick', shape)
+    },
+    handleDragEnd(e,shape){
+     // console.log(shape.x,shape.y)
+      //console.log(e.target.attrs.x,e.target.attrs.y)
+      shape.x = e.target.attrs.x
+      shape.y = e.target.attrs.y
     }
   }
 }
@@ -82,7 +99,7 @@ export default {
 .canvas{
   margin: auto;
   background-color: azure;
-  width: 1200px;
+  width: 1100px;
   height: 550px;
   border: 3px solid #000000;
 }
