@@ -43,27 +43,15 @@ public class ShapeController {
         shapeService.modifyShape(modifiedShape);
     }
     @GetMapping("/save")
-    public String Save(@RequestParam String filePath) throws IOException {
+    public void Save(@RequestParam String filePath) throws IOException {
         System.out.println(filePath);
-        shapeService.ShapesSave(filePath);
-        return filePath;
+        String type="xml";
+        shapeService.SaveShapes(filePath,type);
     }
     @GetMapping("/load")
     public ArrayList<Shape> load(@RequestParam String filePath)throws IOException{
-        ArrayList<Shape>JSONShapes=readXmlFile(filePath);
-
-        String jsonShapes=convertToJson(JSONShapes);
-
-        System.out.println(JSONShapes);
-
-        return JSONShapes;
-    }
-    private ArrayList<Shape>readXmlFile(String xmlFilePath)throws IOException{
-        XmlMapper xmlMapper=new XmlMapper();
-        return xmlMapper.readValue(new File(xmlFilePath), ArrayList.class);
-    }
-    private String convertToJson(ArrayList<Shape>jsonShapes)throws IOException{
-        ObjectMapper objectMapper=new ObjectMapper();
-        return objectMapper.writeValueAsString(jsonShapes);
+        String type="xml";
+        System.out.println(shapeService.loadShapes(filePath,type));
+         return  shapeService.loadShapes(filePath,type);
     }
 }
