@@ -14,19 +14,25 @@ public class Rectangle extends Shape{
 
     public Rectangle(ShapeRequest shapeRequest) {
         super(shapeRequest);
-        this.height = 100;
-        this.width = 200;
+        if(shapeRequest.getHeight() == 0 || shapeRequest.getWidth() == 0){
+            this.height = 100;
+            this.width = 200;
+        }
+        else{
+            this.height= shapeRequest.getHeight();
+            this.width= shapeRequest.getWidth();
+        }
         super.x = x - this.width / 2.0;
         super.y = y - this.height / 2.0;
     }
 
     public void setHeight(double height){
 
-        this.height=height;
+        this.height = height;
     }
     public void setWidth(double width){
 
-        this.width=width;
+        this.width = width;
     }
 
     public double getHeight(){

@@ -15,8 +15,14 @@ public class Ellipse extends Shape{
 
     public Ellipse(ShapeRequest shapeRequest) {
         super(shapeRequest);
-        this.radiusX = 70;
-        this.radiusY = 35;
+        if(shapeRequest.getRadiusX()==0 || shapeRequest.getRadiusY()==0){
+            this.radiusX = 70;
+            this.radiusY = 35;
+        }
+        else{
+            this.radiusX=shapeRequest.getRadiusX();
+            this.radiusY=shapeRequest.getRadiusY();
+        }
     }
 
     public void setRadiusY(double radiusY){

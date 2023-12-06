@@ -15,7 +15,7 @@ public class Circle extends Shape{
 
     public Circle(ShapeRequest shapeRequest) {
         super(shapeRequest);
-        this.radius = 50;
+        this.radius =  shapeRequest.getRadius() == 0 ? 50 :  shapeRequest.getRadius();
     }
 
     public void setRadius(double radius){

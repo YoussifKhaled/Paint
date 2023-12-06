@@ -1,6 +1,4 @@
 package com.example.paint.controller;
-
-
 import com.example.paint.model.Shape;
 import com.example.paint.model.ShapeRequest;
 import com.example.paint.service.ShapeFactory;
@@ -8,6 +6,8 @@ import com.example.paint.service.ShapeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/paint")
@@ -31,9 +31,29 @@ public class ShapeController {
 
     @DeleteMapping("/shapes/{id}")
     public void deleteShape(@PathVariable String id){
-        System.out.println(shapeService.getShapes());
         shapeService.deleteShape(id);
+    }
+
+    @GetMapping("/copy/{id}")
+    public Shape copyShape(@PathVariable String id){
         System.out.println(shapeService.getShapes());
+        return shapeService.getClone(id);
+    }
+
+    @PostMapping("/modify")
+    public void modifyShape(@RequestBody ShapeRequest shapeRequest){
+        Shape modifiedShape = shapeFactory.getShape(shapeRequest);
+        System.out.println(modifiedShape);
+        shapeService.modifyShape(modifiedShape);
+    }
+
+    @GetMapping("/save")
+    public void Save(@RequestParam String filePath,@RequestParam String fileType) throws IOException {
+        shapeService.SaveShapes(filePath,fileType);
+    }
+
+    @GetMapping("/load")
+    public ArrayList<Shape> load(@RequestParam String filePath,@RequestParam String fileType) throws IOException {
+        return shapeService.loadShapes(filePath,fileType);
     }
 }
-

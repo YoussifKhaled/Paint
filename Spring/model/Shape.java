@@ -1,9 +1,8 @@
 package com.example.paint.model;
 
 public abstract class Shape implements Cloneable{
-    private String id;
+    private String id,stroke,type, fill;
     protected double x, y;
-    private String stroke,type;
 
     public Shape(){
 
@@ -11,9 +10,10 @@ public abstract class Shape implements Cloneable{
     public Shape(ShapeRequest shapeRequest){
         this.x = shapeRequest.getX();
         this.y = shapeRequest.getY();
-        this.type = shapeRequest.getShapeType();
+        this.type = shapeRequest.getType();
         this.id = shapeRequest.getId();
         this.stroke = "black";
+        this.fill = shapeRequest.getFill();
     }
 
     public abstract void draw();
@@ -52,15 +52,27 @@ public abstract class Shape implements Cloneable{
         return type;
     }
 
-    public Object Clone(){
-        Object clone = null;
-        try{
-            clone=super.clone();
-        }
-        catch (CloneNotSupportedException e){
-            e.printStackTrace();
-        }
-        return clone;
+    public void setFill(String fill) {
+        this.fill = fill;
     }
 
+    public String getFill() {
+        return fill;
+    }
+
+    public Object Clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Shape{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }

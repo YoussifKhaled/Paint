@@ -14,10 +14,9 @@ public class Triangle extends Shape {
 
     public Triangle(ShapeRequest shapeRequest) {
         super(shapeRequest);
-        this.radius = 100;
+        this.radius = shapeRequest.getRadius() == 0 ?  100 : shapeRequest.getRadius();
 
     }
-
     public double getRadius() {
         return radius;
     }

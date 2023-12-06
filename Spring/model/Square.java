@@ -14,8 +14,13 @@ public class Square extends Shape{
 
     public Square(ShapeRequest shapeRequest) {
         super(shapeRequest);
-        this.height = 100;
-        this.width = 100;
+        if(shapeRequest.getHeight()==0){
+            this.height = 100;
+            this.width = 100;
+        }
+        else{
+            this.height=this.width=shapeRequest.getHeight();
+        }
         super.x = x - this.width / 2.0;
         super.y = y - this.height / 2.0;
     }

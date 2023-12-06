@@ -1,7 +1,10 @@
 package com.example.paint.service;
 
 import com.example.paint.model.Shape;
+import com.example.paint.model.ShapeRequest;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 @Service
@@ -19,29 +22,51 @@ public class ShapeService {
     public  ArrayList<Shape> getShapes() {
         return shapes;
     }
+    public void deleteShape(String id) {
+        shapes.removeIf(shape -> shape.getId().equals(id));
+    }
+    public Shape getClone(String id) {
+        Shape clonedShape;
 
-    public static Shape getClone(int index){
-        Shape clonedShape = shapes.get(index);
-        return (Shape) clonedShape.Clone();
+        for (Shape shape : shapes) {
+
+            if (shape.getId().equals(id)) {
+                clonedShape = (Shape) shape.Clone();
+                clonedShape.setId(Long.toString(System.currentTimeMillis()));
+                clonedShape.setX(shape.getX() + 15);
+                clonedShape.setY(shape.getY() + 15);
+                return this.addShape(clonedShape);
+            }
+        }
+        return null;
     }
 
-   /* public static void loadShapes(){
-        Shape circle=new Circle();
-        circle.setId("1");
-        shapeStore.add(circle);
-        Shape ellipse=new Ellipse();
-        ellipse.setId("2");
-        shapeStore.add(ellipse);
-        Shape rectangle=new Rectangle();
-        rectangle.setId("3");
-        shapeStore.add(rectangle);
-        Shape triangle=new Triangle();
-        triangle.setId("4");
-        shapeStore.add(triangle);
-        Shape lineSegment=new LineSegment();
-        lineSegment.setId("5");
-        shapeStore.add(lineSegment);
-    }*/
+    public void modifyShape(Shape modifiedShape) {
 
+        for (Shape shape : shapes) {
+            if (shape.getId().equals(modifiedShape.getId())) {
+                shapes.set(shapes.indexOf(shape), modifiedShape);
+            }
+        }
+    }
 
+    public  ArrayList<Shape> loadShapes (String filePath,String type) throws IOException {
+
+        DataBase database = DataBase.getInstance();
+        database.setFilePath(filePath);
+        shapes.clear();
+
+        for(ShapeRequest shapeRequest : database.loadDataBase(type)){
+            Shape shape = new ShapeFactory().getShape(shapeRequest);
+            this.addShape(shape);
+        }
+
+        System.out.println(shapes);
+        return shapes;
+    }
+    public  void SaveShapes (String filePath,String type) throws IOException {
+        DataBase database = DataBase.getInstance();
+        database.setFilePath(filePath);
+        database.SaveDataBase(shapes,type);
+    }
 }
