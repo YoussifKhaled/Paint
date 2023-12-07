@@ -15,10 +15,13 @@ import java.util.Stack;
 
 @Service
 public class ShapeService {
-    private static ArrayList<Shape> shapes;
-    private static Stack<ArrayList<Shape>>shapesContainer;
-    private static Stack<ArrayList<Shape>>undoneShapesContainer;
+    private static ArrayList<Shape> shapes;                         //The main list which stores all created shapes
+    private static Stack<ArrayList<Shape>>shapesContainer;          //Stack which stores all actions done
+    private static Stack<ArrayList<Shape>>undoneShapesContainer;    //Stack which stores undo actions
     private int number_of_undo=0;
+    //Number of undo operations done to ensure that no redo operation could be
+    //done without undo operation, and no further undo operations could be done
+    //after doing a different action after an undo operation
     private ShapeFactory shapeFactory;
     public ShapeService(){
         shapes = new ArrayList<>();
@@ -26,6 +29,8 @@ public class ShapeService {
         undoneShapesContainer=new Stack<>();
         shapeFactory=new ShapeFactory();
     }
+    //Creating shape service
+    //Function which added a created shape
     public Shape addShape(Shape shape){
         ArrayList<Shape> currentShapes = new ArrayList<>(shapes);
         currentShapes.add(shape);
@@ -37,38 +42,43 @@ public class ShapeService {
         shapes=currentShapes;
         return shape;
     }
+    //Delete service
+    //Deleting an existed shape else return null
     public ArrayList<Shape> deleteShape(String id){
         for(int i=0;i<shapes.size();i++){
             if(shapes.get(i).getId().equals(id)){
-                ArrayList<Shape> currentShapes = new ArrayList<>(shapes);
-                currentShapes.remove(i);
-                shapesContainer.push(new ArrayList<>(currentShapes));
-                shapes=currentShapes;
-                for(Shape shape:shapes){
-                    System.out.println(shape);
-                }
+                ArrayList<Shape> currentShapes = new ArrayList<>(shapes);              //Create a new list of current shapes
+                currentShapes.remove(i);                                               //Remove the targeted shape
+                shapesContainer.push(new ArrayList<>(currentShapes));                  //Adding the list of shapes to the stack
+                shapes=currentShapes;                                                  //Making the shapes as the current shapes after removing the targeted shape
                 return shapes;
             }
         }
         return null;
     }
+    //Getting the created shapes service
+    //Returning the shapes as they are
     public  ArrayList<Shape> getShapes() {
         return shapes;
     }
+    //Cloning Service
+    //Copying an existed shape else return null
     public Shape getClone(String id){
         Shape clonedShape;
         for(Shape shape:shapes){
             if(shape.getId().equals(id)){
-                clonedShape=(Shape)shape.Clone();
-                clonedShape.setId(Long.toString(System.currentTimeMillis()));
-                clonedShape.setX(shape.getX()+15);
-                clonedShape.setY(shape.getY()+15);
-                addShape(clonedShape);
-                return (Shape) clonedShape.Clone();
+                clonedShape=(Shape)shape.Clone();                                   //Cloning the requested shape
+                clonedShape.setId(Long.toString(System.currentTimeMillis()));       //Setting a new ID to the cloned shape
+                clonedShape.setX(shape.getX()+15);                                  //Setting new shifted coordinates to the cloned shape
+                clonedShape.setY(shape.getY()+15);                                  //...
+                addShape(clonedShape);                                              //Adding the cloned shape to the list of shapes
+                return (Shape) clonedShape.Clone();                                 //Returning a copy of the cloned shape
             }
         }
         return null;
     }
+    //Modifying an existed shape service
+    //Modifying a shape withe new attributes by substituting its place in the list with the new list
     public ArrayList<Shape> modifyShape(Shape modifiedShape){
         for(int i=0;i<shapes.size();i++){
             if(shapes.get(i).getId().equals(modifiedShape.getId())){
@@ -81,29 +91,44 @@ public class ShapeService {
         }
         return null;
     }
-    public  ArrayList<Shape> loadShapes (String filePath,String type) throws IOException {
-        DataBase dataBase=DataBase.getInstance();
+    //Load service
+    public ArrayList<Shape> loadShapes(String filePath, String type) throws IOException {
+        // Obtain a singleton instance of the database
+        DataBase dataBase = DataBase.getInstance();
+        // Set the file path for the database
         dataBase.setFilePath(filePath);
+        // Clear the existing shapes ArrayList
         shapes.clear();
-        for(ShapeRequest shapeRequest:dataBase.loadDataBase(type)){
-            Shape shape=shapeFactory.getShape(shapeRequest);
+        // Load shapes from the database based on the specified type
+        for (ShapeRequest shapeRequest : dataBase.loadDataBase(type)) {
+            // Create a Shape object using the ShapeFactory
+            Shape shape = shapeFactory.getShape(shapeRequest);
+
+            // Add the created shape to the shapes ArrayList
             addShape(shape);
         }
-        while(!shapesContainer.empty()){
+        // Clear the shapesContainer and undoneShapesContainer stacks to prevent user from getting back to created (but not saved) design
+        while (!shapesContainer.empty()) {
             shapesContainer.pop();
         }
-        while(!undoneShapesContainer.empty()){
+        while (!undoneShapesContainer.empty()) {
             undoneShapesContainer.pop();
         }
-        number_of_undo=0;
+        // Reset the number of undo operations
+        number_of_undo = 0;
+        // Push the current state of shapes to the shapesContainer stack
         shapesContainer.push(shapes);
+        // Return the loaded shapes
         return shapes;
     }
+
+    //Save service
     public  void SaveShapes (String filePath,String type) throws IOException {
         DataBase dataBase=DataBase.getInstance();
         dataBase.setFilePath(filePath);
         dataBase.SaveDataBase(type);
     }
+    //Undo service
     public ArrayList<Shape> undo(){
         if(!shapesContainer.empty()){
             undoneShapesContainer.push(shapesContainer.peek());
@@ -120,6 +145,7 @@ public class ShapeService {
         }
         return null;
     }
+    //Redo service
     public ArrayList<Shape> redo(){
         if(!undoneShapesContainer.empty() && number_of_undo!=0){
             ArrayList<Shape> currentShapes=undoneShapesContainer.peek();
@@ -130,5 +156,12 @@ public class ShapeService {
             return shapes;
         }
         return null;
+    }
+    //Clear service
+    public ArrayList<Shape>clearAll(){
+        ArrayList<Shape> currentShapes = new ArrayList<>();
+        shapesContainer.push(new ArrayList<>(currentShapes));
+        shapes=currentShapes;
+        return shapes;
     }
 }
