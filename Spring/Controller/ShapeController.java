@@ -60,4 +60,10 @@ public class ShapeController {
     public ArrayList<Shape> redo(){
         return shapeService.redo();
     }
+    @DeleteMapping("/clear")
+    public ArrayList<Shape>clear(){return shapeService.clearAll();}
+    @GetMapping("/refresh")
+    public ArrayList<Shape>refresh(){
+        return shapeService.getShapes();
+    }
 }
