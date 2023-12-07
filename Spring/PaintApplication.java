@@ -1,7 +1,5 @@
 package com.example.paint;
 
-import com.example.paint.model.Circle;
-import com.example.paint.model.Shape;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

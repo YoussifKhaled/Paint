@@ -11,7 +11,12 @@ public class LineSegment extends Shape{
     public LineSegment(ShapeRequest shapeRequest){
         super(shapeRequest);
         this.length = 200;
-        points = new double[]{0, 0, this.length, 0};
+        if(shapeRequest.getPoints() == null){
+            points = new double[]{0, 0,this.length , 0};
+        }
+        else{
+            this.points = shapeRequest.getPoints();
+        }
     }
 
     public void setLength(double length){

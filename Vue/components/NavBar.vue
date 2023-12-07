@@ -2,14 +2,14 @@
 
   <div class="ToolBar">
     <span style="position: absolute;left: 0;">
-      <button class="UnRedo"><i class="fas fa-undo"></i></button>
-      <button class="UnRedo"><i class="fas fa-redo"></i></button>
+      <button class="UnRedo" @click = "this.$emit('undo')"><i class="fas fa-undo"></i></button>
+      <button class="UnRedo" @click = "this.$emit('redo')"><i class="fas fa-redo"></i></button>
     </span>
     <span>
-      <button class="function" @click = "this.$emit('selectColor')" > Color</button>
-      <button class="function">Resize</button>
-      <button class="function" @click = "this.$emit('copy')">Copy</button>
-      <button class="function" @click = "this.$emit('delete')" > Delete</button>
+      <button class="function" :class="{selected: currentOperation === 'color' }" @click = "this.$emit('selectColor')" > Color</button>
+      <button class="function" :class="{selected: currentOperation === 'resize' }" @click = "this.$emit('resize')">Resize</button>
+      <button class="function" :class="{selected: currentOperation === 'copy' }" @click = "this.$emit('copy')">Copy</button>
+      <button class="function" :class="{selected: currentOperation === 'delete' }" @click = "this.$emit('delete')" > Delete</button>
     </span>
 
     <span style="position: absolute;right: 0;">
@@ -25,7 +25,7 @@
 
       </span>
 
-      <button class="SaveLoad" @click = " this.showDropdown = !this.showDropdown" >Save</button>
+      <button class="SaveLoad" @click = " this.showDropdown = !this.showDropdown , selectedOption = ''" >Save</button>
       <button class="SaveLoad" @click = "this.$emit('load')">Load</button>
     </span>
 
@@ -37,7 +37,8 @@
 <script>
 export default {
   name: 'NavBar',
-  emits: ['selectColor','delete','copy','save','load'],
+  emits: ['selectColor','delete','copy','save','load','resize','undo','redo'],
+  props:['currentOperation'],
   data () {
     return {
       showDropdown: false,
@@ -48,7 +49,7 @@ export default {
   methods:{
     save(){
       if(this.selectedOption)
-      this.$emit('save',this.selectedOption)
+        this.$emit('save',this.selectedOption)
       this.showDropdown = false
     },
   }
@@ -57,6 +58,13 @@ export default {
 </script>
 
 <style scoped>
+
+.selected{
+  border: 4px solid rgb(9, 218, 9) !important;
+  border-radius: 10px !important;
+  background-color: aquamarine !important;
+  text-decoration: none !important;
+}
 .ToolBar{
   position: relative;
   margin: auto auto 2px;

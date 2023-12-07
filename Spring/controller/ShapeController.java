@@ -29,31 +29,40 @@ public class ShapeController {
         return shapeService.addShape(shape);
     }
 
-    @DeleteMapping("/shapes/{id}")
-    public void deleteShape(@PathVariable String id){
-        shapeService.deleteShape(id);
+    @DeleteMapping("/delete/{id}")
+    public ArrayList<Shape> deleteShape(@PathVariable String id){
+        return shapeService.deleteShape(id);
     }
 
     @GetMapping("/copy/{id}")
     public Shape copyShape(@PathVariable String id){
-        System.out.println(shapeService.getShapes());
         return shapeService.getClone(id);
     }
 
     @PostMapping("/modify")
-    public void modifyShape(@RequestBody ShapeRequest shapeRequest){
+    public ArrayList<Shape> modifyShape(@RequestBody ShapeRequest shapeRequest){
         Shape modifiedShape = shapeFactory.getShape(shapeRequest);
-        System.out.println(modifiedShape);
-        shapeService.modifyShape(modifiedShape);
+        return shapeService.modifyShape(modifiedShape);
     }
 
     @GetMapping("/save")
-    public void Save(@RequestParam String filePath,@RequestParam String fileType) throws IOException {
+    public void save(@RequestParam String filePath,@RequestParam String fileType) throws IOException {
         shapeService.SaveShapes(filePath,fileType);
     }
 
     @GetMapping("/load")
     public ArrayList<Shape> load(@RequestParam String filePath,@RequestParam String fileType) throws IOException {
         return shapeService.loadShapes(filePath,fileType);
+    }
+
+    @GetMapping("/undo")
+    public ArrayList<Shape> undo(){
+
+        return shapeService.undo();
+    }
+    @GetMapping("/redo")
+    public ArrayList<Shape> redo(){
+
+        return shapeService.redo();
     }
 }

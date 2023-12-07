@@ -15,7 +15,6 @@ public class ShapeRequest {
     private double sideLength;
     private double length;
     private String stroke;
-
     private double[] points;
 
     public ShapeRequest(){
@@ -79,4 +78,5 @@ public class ShapeRequest {
     public double[] getPoints() {
         return points;
     }
+
 }

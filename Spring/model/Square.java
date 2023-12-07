@@ -21,8 +21,6 @@ public class Square extends Shape{
         else{
             this.height=this.width=shapeRequest.getHeight();
         }
-        super.x = x - this.width / 2.0;
-        super.y = y - this.height / 2.0;
     }
 
     public void setHeight(double height){

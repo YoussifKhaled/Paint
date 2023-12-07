@@ -1,16 +1,22 @@
 <template>
 
-  <NavBar @selectColor = " currentOperation = 'color' "
+  <NavBar :currentOperation = "currentOperation"
+          @selectColor = " currentOperation = 'color' "
           @delete = " currentOperation = 'delete' "
           @copy = " currentOperation = 'copy' "
-          @save = " handleSave "
-          @load = " handleLoad "
+          @resize = " currentOperation = 'resize' "
+          @save = " handleSave"
+          @load = " handleLoad"
+          @undo = "undo"
+          @redo = "redo"
   ></NavBar>
-  <div>
-  <CP v-if = "currentOperation === 'color' " :inline = true v-model = "color" class="color-picker"/>
+
+  <CP v-if = "currentOperation === 'color' "  v-model = "color" class="color-picker"/>
   <DrawingArea :shapes="shapes" @add = "addShape" @shapeClick = "handleShapeClicking"></DrawingArea>
-  </div>
-  <ShapesButtons @select = "selectShape"></ShapesButtons>
+
+  <ShapesButtons :currentOperation = " currentOperation "
+                 :selectedShape = " selectedShape "
+                 @select = "selectShape"></ShapesButtons>
 
 </template>
 
@@ -20,9 +26,9 @@ import DrawingArea from "@/components/DrawingArea.vue";
 import ShapesButtons from "@/components/ShapesButtons.vue";
 import axios from "axios";
 export default {
-
   name: 'App',
   components: {ShapesButtons, DrawingArea, NavBar},
+
   data () {
     return {
       shapes:[],
@@ -74,7 +80,10 @@ export default {
           break;
         case 'copy':
           this.copyShape(shape)
-              break;
+          break;
+        case 'resize':
+          this.resizeShape(shape);
+          break;
         default:
           break;
       }
@@ -99,7 +108,7 @@ export default {
       this.shapes.splice(shapeToBeRemoved,1)
 
       //delete shape from list of shapes in backend
-      axios.delete('http://localhost:8080/paint/shapes/' + shape.id)
+      axios.delete('http://localhost:8080/paint/delete/' + shape.id)
           .then((response) => console.log(response.data))
           .catch((error) => console.log(error))
     },
@@ -109,6 +118,78 @@ export default {
       axios.get('http://localhost:8080/paint/copy/' + shape.id)
           .then((response) => {
             this.shapes.push(response.data)
+          })
+          .catch((error) => console.log(error))
+    },
+    resizeShape(shape){
+      const canvas = document.querySelector('.konvajs-content');
+      const canvasRect = canvas.getBoundingClientRect();
+      const updateShapeSize = (event) => {
+        const mouseX = event.clientX - canvasRect.left;
+        const mouseY = event.clientY - canvasRect.top;
+        const centerDistance = Math.sqrt(
+            Math.pow(mouseX - shape.x, 2) + Math.pow(mouseY - shape.y, 2)
+        );
+        const ax = mouseX-shape.x;
+        const ay = mouseY-shape.y;
+        switch(shape.type){
+          case 'triangle':
+          case 'circle':
+            shape.radius = centerDistance;
+            break;
+          case 'rectangle':
+            var Thetax = Math.atan2(ay,ax)*180/Math.PI;
+            var Theta = Math.atan(shape.height/shape.width)*180/Math.PI;
+            if(Math.abs(Thetax)<Theta||Math.abs(Thetax)>(180-Theta))
+              shape.width = Math.abs(ax)*2;
+            else
+              shape.height = Math.abs(ay)*2;
+            break;
+          case 'square':
+            shape.height = 2*Math.max(Math.abs(ax),Math.abs(ay));
+            shape.width = shape.height;
+            break;
+          case 'line':
+            shape.points = [0,0,ax,ay];
+            break;
+          case 'ellipse':
+            if(Math.abs(ax)<Math.abs(ay))
+              shape.radiusY = centerDistance;
+            else
+              shape.radiusX = centerDistance;
+            break;
+          default:
+            break;
+        }
+        document.addEventListener('click', handleClick);
+      };
+      const handleClick = () => {
+        document.removeEventListener('mousemove', updateShapeSize);
+        document.removeEventListener('click', handleClick);
+        console.log(shape)
+        axios.post('http://localhost:8080/paint/modify', JSON.stringify(shape),{
+          headers: {'Content-Type': 'application/json'}})
+            .then((response) => {
+              console.log(response.data)
+            })
+            .catch((error) => console.log(error))
+      };
+      document.addEventListener('mousemove', updateShapeSize);
+      this.currentOperation = '';
+    },
+    undo(){
+      console.log('undo');
+      axios.get('http://localhost:8080/paint/undo')
+          .then((response) => {
+             console.log(response.data)
+             this.shapes = response.data
+          })
+          .catch((error) => console.log(error))
+    },
+    redo(){
+      axios.get('http://localhost:8080/paint/redo')
+          .then((response) => {
+            if (response.data !== '') this.shapes = response.data
           })
           .catch((error) => console.log(error))
     },
@@ -127,6 +208,7 @@ export default {
 
     },
     handleLoad() {
+
       let file = prompt("Please enter path to load file");
       if (file != null) {
         let fileType = file.split('.').pop().toLowerCase();
@@ -157,8 +239,6 @@ body{
   margin-top: 35px;
 }
 .color-picker{
-  position: absolute;
-  top: 0;
-  left: 0;
+  margin-bottom: 4px;
 }
 </style>
