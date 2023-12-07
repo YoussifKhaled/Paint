@@ -34,6 +34,10 @@ public class ShapeController {
         return shapeService.deleteShape(id);
     }
 
+    @DeleteMapping("/clear")
+    public ArrayList<Shape>clear(){return shapeService.clearAll();}
+
+
     @GetMapping("/copy/{id}")
     public Shape copyShape(@PathVariable String id){
         return shapeService.getClone(id);
@@ -64,5 +68,9 @@ public class ShapeController {
     public ArrayList<Shape> redo(){
 
         return shapeService.redo();
+    }
+    @GetMapping("/refresh")
+    public ArrayList<Shape>refresh() {
+        return shapeService.getShapes();
     }
 }
