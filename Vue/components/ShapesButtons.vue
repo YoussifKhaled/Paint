@@ -1,22 +1,45 @@
 <template>
   <div class = "shapes-buttons">
-    <button class="ShapeButton" @click="this.$emit('select','line')">Line</button>
-    <button class="ShapeButton" @click="this.$emit('select','square')">Square</button>
-    <button class="ShapeButton" @click="this.$emit('select','rectangle') ">Rectangle</button>
-    <button class="ShapeButton" @click="this.$emit('select','triangle')">Triangle</button>
-    <button class="ShapeButton" @click="this.$emit('select','circle')">Circle</button>
-    <button class="ShapeButton" @click="this.$emit('select','ellipse')">Ellipse</button>
+    <button class="ShapeButton"
+            :class="{selected: currentOperation === 'draw' && selectedShape === 'line'}"
+            @click="this.$emit('select','line')">Line</button>
+
+    <button class="ShapeButton"
+            :class="{selected: currentOperation === 'draw' && selectedShape === 'square'}"
+            @click="this.$emit('select','square')">Square</button>
+
+    <button class="ShapeButton"
+            :class="{selected: currentOperation === 'draw' && selectedShape === 'rectangle'}"
+            @click="this.$emit('select','rectangle') ">Rectangle</button>
+
+    <button class="ShapeButton"
+            :class="{selected: currentOperation === 'draw' && selectedShape === 'triangle'}"
+            @click="this.$emit('select','triangle')">Triangle</button>
+
+    <button class="ShapeButton"
+            :class="{selected: currentOperation === 'draw' && selectedShape === 'circle'}"
+            @click="this.$emit('select','circle')">Circle</button>
+
+    <button class="ShapeButton"
+            :class="{selected: currentOperation === 'draw' && selectedShape === 'ellipse'}"
+            @click="this.$emit('select','ellipse')">Ellipse</button>
   </div>
 </template>
 
 <script >
 export default {
   emits:['select'],
+  props:['currentOperation','selectedShape']
 }
 </script>
 
 <style scoped>
-
+.selected{
+  border: 4px solid rgb(9, 218, 9) !important;
+  border-radius: 10px !important;
+  background-color: aquamarine !important;
+  font-size: 24px !important;
+}
 .ShapeButton{
   width: 130px;
   height: 100%;

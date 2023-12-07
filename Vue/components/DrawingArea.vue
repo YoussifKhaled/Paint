@@ -19,7 +19,7 @@
             x: shape.x,
             y: shape.y,
             sides: 3,
-            radius: 100,
+            radius: shape.radius,
             fill: shape.fill,
             stroke: shape.stroke,
             id: shape.id,
@@ -35,8 +35,8 @@
           draggable: true}" @click= "handleShapeClicking(shape)" @dragend = "handleDragEnd($event,shape)"></v-circle>
 
           <v-rect v-if="shape.type === 'rectangle' || shape.type === 'square' "  :config="{
-          x: shape.x,
-          y: shape.y,
+          x: shape.x - shape.width/2,
+          y: shape.y - shape.height/2,
           width: shape.width,
           height: shape.height,
           fill: shape.fill,
@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'DrawingArea',
   props:['shapes'],
@@ -85,10 +87,24 @@ export default {
       this.$emit('shapeClick', shape)
     },
     handleDragEnd(e,shape){
-     // console.log(shape.x,shape.y)
-      //console.log(e.target.attrs.x,e.target.attrs.y)
-      shape.x = e.target.attrs.x
-      shape.y = e.target.attrs.y
+
+      // update shape after moving in front
+      if(e.target.attrs.width === undefined){
+        shape.x = e.target.attrs.x
+        shape.y = e.target.attrs.y
+      }
+      else{
+        shape.x = e.target.attrs.x + shape.width/2
+        shape.y = e.target.attrs.y + shape.height/2
+      }
+
+      // update shape after moving in back
+      axios.post('http://localhost:8080/paint/modify', JSON.stringify(shape),{
+        headers: {'Content-Type': 'application/json'}})
+          .then((response) => {
+            console.log(response.data)
+          })
+          .catch((error) => console.log(error))
     }
   }
 }
