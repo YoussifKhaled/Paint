@@ -29,6 +29,7 @@ import axios from "axios";
 export default {
   name: 'App',
   components: {ShapesButtons, DrawingArea, NavBar},
+  //prevent default behavior of refresh
   mounted() {
     axios.get('http://localhost:8080/paint/refresh')
         .then((response) => {
@@ -75,7 +76,6 @@ export default {
       this.currentOperation = 'draw'
     },
     handleShapeClicking(shape){
-      //console.log(shape)
 
       //handle the shape clicking based on the selected option from the navbar
       switch (this.currentOperation) {
@@ -185,7 +185,7 @@ export default {
       this.currentOperation = '';
     },
     undo(){
-      console.log('undo');
+      
       axios.get('http://localhost:8080/paint/undo')
           .then((response) => {
              console.log(response.data)
