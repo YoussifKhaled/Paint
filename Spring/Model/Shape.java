@@ -10,9 +10,9 @@ public abstract class Shape implements Cloneable{
     public Shape(ShapeRequest shapeRequest){
         this.x = shapeRequest.getX();
         this.y = shapeRequest.getY();
-        this.type = shapeRequest.getShapeType();
+        this.type = shapeRequest.getType();
         this.id = shapeRequest.getId();
-        this.color=shapeRequest.getColor();
+        this.color=shapeRequest.getFill();
     }
     public abstract void draw();
     //Setters

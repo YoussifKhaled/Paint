@@ -1,11 +1,11 @@
 package dev.PainterApplication.Painter.Model;
 
 public class ShapeRequest {
-    private String shapeType;
+    private String type;
     private double x;
     private double y;
     private String Id;
-    private String color;
+    private String fill;
     private double radius;
     private double radiusX;
     private double radiusY;
@@ -13,17 +13,17 @@ public class ShapeRequest {
     private double width;
     private double sideLength;
     private double length;
+    private String stroke;
 
     public ShapeRequest(){}
 
-    public void setShapeType(String shapeType) {
-        this.shapeType = shapeType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setX(double x) {
         this.x = x;
     }
-
     public void setY(double y) {
         this.y = y;
     }
@@ -32,25 +32,27 @@ public class ShapeRequest {
     public void setWidth(double width){this.width=width;}
     public void setSideLength(double sideLength){this.sideLength=sideLength;}
     public void setLength(double length){this.length=length;}
-    public void setColor(String color){this.color=color;}
+    public void setFill(String fill){this.fill=fill;}
     public void setRadiusX(double radiusX){this.radiusX=radiusX;}
     public void setRadiusY(double radiusY){this.radiusY=radiusY;}
-    public String getShapeType() {
-        return shapeType;
+    public void setId(String id) {
+        Id = id;
     }
+    public void setStroke(String stroke){this.stroke=stroke;}
+    public String getType() {
+        return type;
+    }
+
     public double getX() {
         return x;
     }
     public double getY() {
         return y;
     }
-    public void setId(String id) {
-        Id = id;
-    }
     public String getId() {
         return Id;
     }
-    public String getColor(){return color;}
+    public String getFill(){return fill;}
     public double getRadius(){return radius;}
     public double getHeight(){return height;}
     public double getWidth(){return width;}
@@ -58,4 +60,5 @@ public class ShapeRequest {
     public double getLength() {return length;}
     public double getRadiusX() {return radiusX;}
     public double getRadiusY() {return radiusY;}
+    public String getStroke(){return stroke;}
 }

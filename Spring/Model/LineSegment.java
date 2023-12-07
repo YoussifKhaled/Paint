@@ -14,7 +14,6 @@ public class LineSegment extends Shape{
         }
         points = new double[]{0,0,this.length,0};
     }
-
     public void setLength(double length){
         this.length = length;
     }

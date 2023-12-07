@@ -18,8 +18,6 @@ public class Rectangle extends Shape{
             this.height= shapeRequest.getHeight();
             this.width= shapeRequest.getWidth();
         }
-        super.x = x - this.width / 2.0;
-        super.y = y - this.height / 2.0;
     }
     public void setHeight(double height){
         this.height=height;
