@@ -29,41 +29,35 @@ public class ShapeController {
         Shape shape = shapeFactory.getShape(shapeRequest);
         return shapeService.addShape(shape);
     }
-    @GetMapping("/delete/{id}")
-    public void deleteShape(@PathVariable String id){
-        shapeService.deleteShape(id);
+    @DeleteMapping("/delete/{id}")
+    public ArrayList<Shape> deleteShape(@PathVariable String id){
+        return shapeService.deleteShape(id);
     }
     @GetMapping("/copy/{id}")
     public Shape copyShape(@PathVariable String id){
         return shapeService.getClone(id);
     }
     @PostMapping("/modify")
-    public void modifyShape(@RequestBody ShapeRequest shapeRequest){
-        Shape modifiedShape=createShape(shapeRequest);
-        shapeService.modifyShape(modifiedShape);
+    public ArrayList<Shape> modifyShape(@RequestBody ShapeRequest shapeRequest){
+        Shape modifiedShape = shapeFactory.getShape(shapeRequest);
+        return shapeService.modifyShape(modifiedShape);
     }
     @GetMapping("/save")
-    public String Save(@RequestParam String filePath) throws IOException {
+    public void Save(@RequestParam String filePath,@RequestParam String fileType) throws IOException {
         System.out.println(filePath);
-        shapeService.ShapesSave(filePath);
-        return filePath;
+        shapeService.SaveShapes(filePath,fileType);
     }
     @GetMapping("/load")
-    public ArrayList<Shape> load(@RequestParam String filePath)throws IOException{
-        ArrayList<Shape>JSONShapes=readXmlFile(filePath);
-
-        String jsonShapes=convertToJson(JSONShapes);
-
-        System.out.println(JSONShapes);
-
-        return JSONShapes;
+    public ArrayList<Shape> load(@RequestParam String filePath,@RequestParam String fileType)throws IOException{
+        System.out.println(shapeService.loadShapes(filePath,fileType));
+        return shapeService.loadShapes(filePath,fileType);
     }
-    private ArrayList<Shape>readXmlFile(String xmlFilePath)throws IOException{
-        XmlMapper xmlMapper=new XmlMapper();
-        return xmlMapper.readValue(new File(xmlFilePath), ArrayList.class);
-    }
-    private String convertToJson(ArrayList<Shape>jsonShapes)throws IOException{
-        ObjectMapper objectMapper=new ObjectMapper();
-        return objectMapper.writeValueAsString(jsonShapes);
+   @GetMapping("/undo")
+    public ArrayList<Shape> undo(){
+        return shapeService.undo();
+   }
+    @GetMapping("/redo")
+    public ArrayList<Shape> redo(){
+        return shapeService.redo();
     }
 }
