@@ -2,11 +2,6 @@ package dev.PainterApplication.Painter.Model;
 public class Square extends Shape{
     private double height;
     private double width;
-    public Square(){}
-    public Square(double height){
-        this.height = height;
-        this.width = height;
-    }
     public Square(ShapeRequest shapeRequest) {
         super(shapeRequest);
         if(shapeRequest.getHeight()==0){
@@ -28,9 +23,5 @@ public class Square extends Shape{
     }
     public double getWidth(){
         return width;
-    }
-    @Override
-    public void draw() {
-        System.out.println("draw Square");
     }
 }

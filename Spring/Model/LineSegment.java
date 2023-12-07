@@ -3,16 +3,15 @@ package dev.PainterApplication.Painter.Model;
 public class LineSegment extends Shape{
     private double[] points;
     private double length;
-    public LineSegment(){}
     public LineSegment(ShapeRequest shapeRequest){
         super(shapeRequest);
-        if(shapeRequest.getLength()==0){
-            this.length=200;
+        this.length = 200;
+        if(shapeRequest.getPoints() == null){
+            points = new double[]{0, 0,this.length , 0};
         }
         else{
-            this.length=shapeRequest.getLength();
+            this.points = shapeRequest.getPoints();
         }
-        points = new double[]{0,0,this.length,0};
     }
     public void setLength(double length){
         this.length = length;
@@ -21,7 +20,6 @@ public class LineSegment extends Shape{
 
         return length;
     }
-
     public double[] getPoints() {
         points[0] = this.x;
         points[1] = this.y;
@@ -29,13 +27,7 @@ public class LineSegment extends Shape{
         points[3] = this.y;
         return points;
     }
-
     public void setPoints(double[] points) {
         this.points = points;
-    }
-
-    @Override
-    public void draw(){
-        System.out.println("Line segment is drawn");
     }
 }

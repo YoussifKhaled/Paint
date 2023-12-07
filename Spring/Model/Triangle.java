@@ -20,7 +20,4 @@ public class Triangle extends Shape {
     public void setRadius(double radius) {
         this.radius = radius;
     }
-    public void draw(){
-        System.out.println("Triangle is drawn");
-    }
 }

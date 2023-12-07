@@ -31,8 +31,4 @@ public class Rectangle extends Shape{
     public double getWidth(){
         return width;
     }
-    @Override
-    public void draw(){
-        System.out.println("Rectangle is drawn");
-    }
 }

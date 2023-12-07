@@ -14,13 +14,11 @@ public class ShapeRequest {
     private double sideLength;
     private double length;
     private String stroke;
-
+    private double[] points;
     public ShapeRequest(){}
-
     public void setType(String type) {
         this.type = type;
     }
-
     public void setX(double x) {
         this.x = x;
     }
@@ -39,10 +37,10 @@ public class ShapeRequest {
         Id = id;
     }
     public void setStroke(String stroke){this.stroke=stroke;}
+    public void setPoints(double[] points) {this.points = points;}
     public String getType() {
         return type;
     }
-
     public double getX() {
         return x;
     }
@@ -61,4 +59,5 @@ public class ShapeRequest {
     public double getRadiusX() {return radiusX;}
     public double getRadiusY() {return radiusY;}
     public String getStroke(){return stroke;}
+    public double[] getPoints() {return points;}
 }
