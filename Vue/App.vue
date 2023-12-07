@@ -9,6 +9,7 @@
           @load = " handleLoad"
           @undo = "undo"
           @redo = "redo"
+          @clear = "clear"
   ></NavBar>
 
   <CP v-if = "currentOperation === 'color' "  v-model = "color" class="color-picker"/>
@@ -28,7 +29,13 @@ import axios from "axios";
 export default {
   name: 'App',
   components: {ShapesButtons, DrawingArea, NavBar},
-
+  mounted() {
+    axios.get('http://localhost:8080/paint/refresh')
+        .then((response) => {
+          this.shapes = response.data
+        })
+        .catch((error) => console.log(error))
+  },
   data () {
     return {
       shapes:[],
@@ -190,6 +197,13 @@ export default {
       axios.get('http://localhost:8080/paint/redo')
           .then((response) => {
             if (response.data !== '') this.shapes = response.data
+          })
+          .catch((error) => console.log(error))
+    },
+    clear(){
+      axios.delete('http://localhost:8080/paint/clear')
+          .then((response) => {
+            this.shapes = response.data
           })
           .catch((error) => console.log(error))
     },

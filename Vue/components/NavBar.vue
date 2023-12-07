@@ -10,6 +10,7 @@
       <button class="function" :class="{selected: currentOperation === 'resize' }" @click = "this.$emit('resize')">Resize</button>
       <button class="function" :class="{selected: currentOperation === 'copy' }" @click = "this.$emit('copy')">Copy</button>
       <button class="function" :class="{selected: currentOperation === 'delete' }" @click = "this.$emit('delete')" > Delete</button>
+      <button class = "function" @click = "this.$emit('clear')">Clear</button>
     </span>
 
     <span style="position: absolute;right: 0;">
@@ -37,7 +38,7 @@
 <script>
 export default {
   name: 'NavBar',
-  emits: ['selectColor','delete','copy','save','load','resize','undo','redo'],
+  emits: ['selectColor','delete','copy','save','load','resize','undo','redo','clear'],
   props:['currentOperation'],
   data () {
     return {
