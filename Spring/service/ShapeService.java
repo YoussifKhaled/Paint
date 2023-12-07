@@ -132,4 +132,11 @@ public class ShapeService {
         }
         return null;
     }
+
+    public ArrayList<Shape> clearAll() {
+        ArrayList<Shape> currentShapes = new ArrayList<>();
+        shapesContainer.push(new ArrayList<>(currentShapes));
+        shapes = currentShapes;
+        return shapes;
+    }
 }
