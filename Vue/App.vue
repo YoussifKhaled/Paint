@@ -29,7 +29,6 @@ import axios from "axios";
 export default {
   name: 'App',
   components: {ShapesButtons, DrawingArea, NavBar},
-  //prevent default behavior of refresh
   mounted() {
     axios.get('http://localhost:8080/paint/refresh')
         .then((response) => {
@@ -45,38 +44,33 @@ export default {
         height: 550
       },
       selectedShape:'',
-      color: '',
-      currentOperation: '',
+      color:'ff3200',
+      currentOperation:'',
     }
   },
   methods:{
     addShape(e){
-
       if(this.currentOperation !== 'draw') return
-
       const shapeRequest = {
         type : this.selectedShape,
         id: Date.now().toString(),
         x : e.evt.offsetX,
         y : e.evt.offsetY,
       }
-
       //add shape to list of shapes in backend and list of shapes in frontend
-      axios.post('http://localhost:8080/paint/shapes', JSON.stringify(shapeRequest),{
+      axios.post('http://localhost:8080/paint/create', JSON.stringify(shapeRequest),{
         headers: {'Content-Type': 'application/json'}})
           .then((response) => {
             console.log(response.data)
             this.shapes.push(response.data)
           })
           .catch((error) => console.log(error))
-
     },
     selectShape(shape){
       this.selectedShape = shape
       this.currentOperation = 'draw'
     },
     handleShapeClicking(shape){
-
       //handle the shape clicking based on the selected option from the navbar
       switch (this.currentOperation) {
         case 'color':
@@ -97,9 +91,7 @@ export default {
 
     },
     colorShape(shape){
-      //change color of shape in frontend
       shape.fill = '#' + this.color
-
       //change color of shape in backend
       axios.post('http://localhost:8080/paint/modify', JSON.stringify(shape),{
         headers: {'Content-Type': 'application/json'}})
@@ -109,7 +101,6 @@ export default {
           .catch((error) => console.log(error))
     },
     deleteShape(shape){
-
       //delete shape from shapes array
       let shapeToBeRemoved = this.shapes.findIndex(s => s.id === shape.id)
       this.shapes.splice(shapeToBeRemoved,1)
@@ -120,7 +111,6 @@ export default {
           .catch((error) => console.log(error))
     },
     copyShape(shape){
-
       //copy shape in backend and add it to shapes array in frontend
       axios.get('http://localhost:8080/paint/copy/' + shape.id)
           .then((response) => {
@@ -185,7 +175,7 @@ export default {
       this.currentOperation = '';
     },
     undo(){
-      
+      console.log('undo');
       axios.get('http://localhost:8080/paint/undo')
           .then((response) => {
              console.log(response.data)
@@ -194,9 +184,13 @@ export default {
           .catch((error) => console.log(error))
     },
     redo(){
+      console.log('redo');
       axios.get('http://localhost:8080/paint/redo')
           .then((response) => {
-            if (response.data !== '') this.shapes = response.data
+            if(response.data !== ''){
+              console.log(response.data)
+              this.shapes = response.data
+            }
           })
           .catch((error) => console.log(error))
     },
@@ -219,10 +213,8 @@ export default {
               console.error('Error:', error)
             });
       }
-
     },
     handleLoad() {
-
       let file = prompt("Please enter path to load file");
       if (file != null) {
         let fileType = file.split('.').pop().toLowerCase();
