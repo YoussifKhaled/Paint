@@ -41,7 +41,7 @@ export default {
   font-size: 24px !important;
 }
 .ShapeButton{
-  width: 130px;
+  width: 180px;
   height: 100%;
   border: none;
   border-radius: 10px;
@@ -54,6 +54,7 @@ export default {
 }
 .shapes-buttons{
   width: 1100px;
+  height: 40px;
   margin: auto;
   display: flex;
   justify-content: space-around;

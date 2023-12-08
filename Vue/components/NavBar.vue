@@ -1,5 +1,4 @@
 <template>
-
   <div class="ToolBar">
     <span style="position: absolute;left: 0;">
       <button class="UnRedo" @click = "this.$emit('undo')"><i class="fas fa-undo"></i></button>
@@ -14,26 +13,19 @@
     </span>
 
     <span style="position: absolute;right: 0;">
-
       <span v-if="showDropdown" class="dropdown">
-
         <label for="myDropdown">Select file type:</label>
         <select v-model="selectedOption" id="myDropdown" @change="save">
           <option v-for="file in fileType" :key="file">
             {{ file}}
           </option>
         </select>
-
       </span>
-
       <button class="SaveLoad" @click = " this.showDropdown = !this.showDropdown , selectedOption = ''" >Save</button>
       <button class="SaveLoad" @click = "this.$emit('load')">Load</button>
     </span>
-
-
   </div>
 </template>
-
 
 <script>
 export default {
@@ -55,11 +47,9 @@ export default {
     },
   }
 }
-
 </script>
 
 <style scoped>
-
 .selected{
   border: 4px solid rgb(9, 218, 9) !important;
   border-radius: 10px !important;
