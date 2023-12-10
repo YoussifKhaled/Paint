@@ -1,6 +1,6 @@
 *****بسم الله الرحمن الرحيم*****
 # Paint Web Application Project
-### Team :
+### Contributors :
 - <a href="https://github.com/YoussifKhaled">Youssif Khaled</a>
 - <a href="https://github.com/esmailMahmouds">Esmail Mahmoud</a>
 - <a href="https://github.com/mahfouz72">Mohamad Mahfouz</a>
